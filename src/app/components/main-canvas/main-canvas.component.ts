@@ -21,9 +21,9 @@ export class MainCanvasComponent implements OnInit {
 
   squaresList: Square[] = [];
 
-  infectionRateRedVirus = 40;
-  infectionRateBlueVirus = 50;
-  infectionRateGreenVirus = 20;
+  infectionRateRedVirus = 60;
+  infectionRateBlueVirus = 90;
+  infectionRateGreenVirus = 80;
 
   private ctx: CanvasRenderingContext2D;
   private progressCtx: CanvasRenderingContext2D;
@@ -131,6 +131,7 @@ export class MainCanvasComponent implements OnInit {
     if (squaresLength > Constants.MAX_VIRUS) {
       clearInterval(this.drawInterval);
       clearInterval(this.moveInterval);
+      clearInterval(this.progressInterval);
     }
   }
   onClick($event) {

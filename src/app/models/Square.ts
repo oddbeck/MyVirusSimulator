@@ -14,12 +14,17 @@ export class Square{
   infectionRate = 0;
   isDead = false;
   repliTotalCount = 0;
+  inheritedInfectionRate = 0;
 
   constructor(x: number , y: number, infectionRate: number) {
     this.x = x;
     this.y = y;
     this.xAdjust = Math.random();
     this.yAdjust = Math.random();
+
+    this.inheritedInfectionRate = infectionRate;
+    this.infectionRate = infectionRate;
+
     // randomly set the direction it's gonna move on the x axis
     if (Math.random() > 0.5) {
       this.xAdjust = this.xAdjust * -1;
@@ -28,7 +33,6 @@ export class Square{
     if (Math.random() > 0.5) {
       this.yAdjust = this.yAdjust * -1;
     }
-    this.infectionRate = infectionRate;
   }
 
   adjustItem() {
@@ -60,7 +64,8 @@ export class Square{
       const copy = new Square(this.x, this.y, this.infectionRate);
       copy.xAdjust = HelperFunctions.getRandomMovementVector();
       copy.yAdjust = HelperFunctions.getRandomMovementVector();
-      copy.infectionRate = Math.abs(HelperFunctions.generateInfectionRate() - copy.infectionRate);
+      copy.infectionRate = this.inheritedInfectionRate + (HelperFunctions.getRandomInt() % 20 ) - 10;
+      copy.inheritedInfectionRate = this.inheritedInfectionRate;
       copy.myColor = this.generateNewColorWithinSameSpecter();
       copy.red = this.red;
       copy.blue = this.blue;
