@@ -1,6 +1,7 @@
-import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input, ContentChild } from '@angular/core';
 import { Square } from 'src/app/models/Square';
 import { Constants } from '../../models/Constants';
+import { HelperFunctions } from 'src/app/models/HelperFunctions';
 
 @Component({
   selector: 'app-main-canvas',
@@ -13,28 +14,27 @@ export class MainCanvasComponent implements OnInit {
   canvas: ElementRef<HTMLCanvasElement>;
   @ViewChild('progressbar', { static: true })
   progressbar: ElementRef<HTMLCanvasElement>;
-
-  height;
-  width;
-
   @Input()
   squaresCount: number;
 
   squaresList: Square[] = [];
 
+  infectionRateRedVirus = 0;
+  infectionRateBlueVirus = 0;
+  infectionRateGreenVirus = 0;
+
   private ctx: CanvasRenderingContext2D;
   private progressCtx: CanvasRenderingContext2D;
 
   constructor() {
-    debugger;
-    this.height = 600;
-    this.width = this.height;
-    const redSquare = new Square(Constants.getRandomInt(), Constants.getRandomInt());
-    const greenSquare = new Square(Constants.getRandomInt(), Constants.getRandomInt());
-    const blueSquare = new Square(Constants.getRandomInt(), Constants.getRandomInt());
-    redSquare.red = 255; redSquare.blue = redSquare.green = 0;
-    blueSquare.blue = 255; blueSquare.red = blueSquare.green = 0;
-    greenSquare.green = 255; greenSquare.red = greenSquare.blue = 0;
+
+    const redSquare = new Square(HelperFunctions.getRandomInt(), HelperFunctions.getRandomInt());
+    const greenSquare = new Square(HelperFunctions.getRandomInt(), HelperFunctions.getRandomInt());
+    const blueSquare = new Square(HelperFunctions.getRandomInt(), HelperFunctions.getRandomInt());
+
+    redSquare.red = 255;
+    blueSquare.blue = 255;
+    greenSquare.green = 255;
 
     redSquare.setMyColorString();
     greenSquare.setMyColorString();
@@ -64,15 +64,15 @@ export class MainCanvasComponent implements OnInit {
   }
 
   findNontakenSpot(): Square {
-    let x = Constants.getRandomInt();
-    let y = Constants.getRandomInt();
+    let x = HelperFunctions.getRandomInt();
+    let y = HelperFunctions.getRandomInt();
 
     let square = new Square(x, y);
 
     while (!this.findMatch(square))
     {
-      x = Constants.getRandomInt();
-      y = Constants.getRandomInt();
+      x = HelperFunctions.getRandomInt();
+      y = HelperFunctions.getRandomInt();
       square = new Square(x, y);
     }
     return square;
@@ -83,7 +83,6 @@ export class MainCanvasComponent implements OnInit {
   progressInterval;
 
   ngOnInit(): void {
-
     this.squaresCount = this.squaresList.length;
 
     this.drawInterval = setInterval(() => {
@@ -99,9 +98,9 @@ export class MainCanvasComponent implements OnInit {
 
   drawProgressbar() {
     this.progressCtx = this.progressbar.nativeElement.getContext('2d');
-    this.progressCtx.clearRect(0, 0, this.height, this.height);
+    this.progressCtx.clearRect(1, 0, Constants.SCREEN_HEIGHT, Constants.SCREEN_WIDTH);
     this.progressCtx.fillStyle = 'orange';
-    this.progressCtx.fillRect(0, 0, (this.squaresCount / 5000) * 100, 14);
+    this.progressCtx.fillRect(1, 0, this.squaresCount / (Constants.MAX_VIRUS / Constants.SCREEN_HEIGHT) , 14);
   }
 
 
@@ -122,14 +121,17 @@ export class MainCanvasComponent implements OnInit {
     for (let i = 0; i < squaresLength; i++) {
       const square = this.squaresList[i];
       if (!square.isDead) {
-        this.ctx.fillStyle = square.mainColor;
-        this.ctx.fillRect(square.x, square.y, square.width, square.height);
+        this.ctx.fillStyle = square.myColor;
+        this.ctx.fillRect(square.x, square.y, Constants.VIRUS_BOX_SIZE, Constants.VIRUS_BOX_SIZE);
         }
     }
 
-    if (squaresLength > 30000) {
+    if (squaresLength > Constants.MAX_VIRUS) {
       clearInterval(this.drawInterval);
       clearInterval(this.moveInterval);
     }
+  }
+  onClick($event) {
+    console.log(this.canvas2);
   }
 }

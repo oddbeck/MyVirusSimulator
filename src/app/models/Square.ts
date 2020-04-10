@@ -1,6 +1,8 @@
 import { Constants } from './Constants';
+import { HelperFunctions } from './HelperFunctions';
+
 export class Square{
-  mainColor = '';
+  myColor = '';
   red = 0;
   green =  0;
   blue = 0;
@@ -8,12 +10,11 @@ export class Square{
   yAdjust = 0;
   x = 0;
   y = 0;
-  width = 5;
-  height = 5;
-  repliCounter = 0;
-  repliLimit = 0;
+  moveCounter = 0;
+  infectionRate = 0;
   isDead = false;
   repliTotalCount = 0;
+
   constructor(x: number , y: number) {
     this.x = x;
     this.y = y;
@@ -27,13 +28,9 @@ export class Square{
     if (Math.random() > 0.5) {
       this.yAdjust = this.yAdjust * -1;
     }
-    this.repliLimit = this.generateRepliLimit();
+    this.infectionRate = Constants.generateInfectionRate();
   }
 
-
-  generateRepliLimit(): number {
-    return (Constants.getRandomInt() % 170) + 10;
-  }
   adjustItem() {
     if (this.isDead) {
       return;
@@ -44,7 +41,7 @@ export class Square{
       this.y += 1;
       this.yAdjust *= -1;
     }
-    if (this.y >= Constants.SCREEN_HEIGHT - this.height ) {
+    if (this.y >= Constants.SCREEN_HEIGHT - Constants.VIRUS_BOX_SIZE ) {
       this.y -= 1;
       this.yAdjust *= -1;
     }
@@ -52,22 +49,24 @@ export class Square{
       this.x += 1;
       this.xAdjust *= -1;
     }
-    if (this.x >= Constants.SCREEN_WIDTH - this.height ) {
+    if (this.x >= Constants.SCREEN_WIDTH - Constants.VIRUS_BOX_SIZE ) {
       this.x -= 1;
       this.xAdjust *= -1;
     }
-    this.repliCounter++;
-    if (this.repliCounter > this.repliLimit) {
-      this.repliCounter = 0;
-      let copy = new Square(this.x, this.y);
+    this.moveCounter++;
+    // we use the move-counter in order to decide if we should "infect" (or replicate)
+    if (this.moveCounter > this.infectionRate) {
+      this.moveCounter = 0;
+      const copy = new Square(this.x, this.y);
       copy.xAdjust = Constants.getRandomMovementVector();
       copy.yAdjust = Constants.getRandomMovementVector();
-      copy.repliLimit = this.generateRepliLimit();
-      copy.mainColor = this.tweakColor();
+      copy.infectionRate = this.generateInfectionRate();
+      copy.myColor = this.generateNewColorWithinSameSpecter();
       copy.red = this.red;
       copy.blue = this.blue;
       copy.green = this.green;
       this.repliTotalCount++;
+      // we don't want this to replicate forever, so they die after 20 replications...
       if (this.repliTotalCount > 20) {
         this.isDead = true;
       }
@@ -76,32 +75,34 @@ export class Square{
     return null;
   }
 
-  tweakColor(): string {
+  generateNewColorWithinSameSpecter(): string {
 
     let red = this.red;
     let green = this.green;
     let blue = this.blue;
 
-    debugger;
+    // if we're red we tweak our color within the red gradients
     if (red > 0 ) {
-      debugger;
       red = Constants.getRandomInt() % 50;
       red = red + 180;
     }
+    // and if we're green we tweak it within the green gradients
     if (green > 0 ) {
-      debugger;
       green = Constants.getRandomInt() % 50;
       green = green + 180;
     }
+    // same goes if we're blue...
     if (blue > 0 ) {
-      debugger;
       blue = Constants.getRandomInt() % 50;
       blue = blue + 180;
     }
     return Constants.generateColorString(red, green, blue);
   }
 
+  getMyColorString(): string {
+    return Constants.generateColorString(this.red, this.green, this.blue);
+  }
   setMyColorString(): void {
-    this.mainColor = Constants.generateColorString(this.red, this.green, this.blue);
+    this.myColor = Constants.generateColorString(this.red, this.green, this.blue);
   }
 }
