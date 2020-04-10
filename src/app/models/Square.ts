@@ -15,7 +15,7 @@ export class Square{
   isDead = false;
   repliTotalCount = 0;
 
-  constructor(x: number , y: number) {
+  constructor(x: number , y: number, infectionRate: number) {
     this.x = x;
     this.y = y;
     this.xAdjust = Math.random();
@@ -28,7 +28,7 @@ export class Square{
     if (Math.random() > 0.5) {
       this.yAdjust = this.yAdjust * -1;
     }
-    this.infectionRate = Constants.generateInfectionRate();
+    this.infectionRate = infectionRate;
   }
 
   adjustItem() {
@@ -57,10 +57,10 @@ export class Square{
     // we use the move-counter in order to decide if we should "infect" (or replicate)
     if (this.moveCounter > this.infectionRate) {
       this.moveCounter = 0;
-      const copy = new Square(this.x, this.y);
-      copy.xAdjust = Constants.getRandomMovementVector();
-      copy.yAdjust = Constants.getRandomMovementVector();
-      copy.infectionRate = this.generateInfectionRate();
+      const copy = new Square(this.x, this.y, this.infectionRate);
+      copy.xAdjust = HelperFunctions.getRandomMovementVector();
+      copy.yAdjust = HelperFunctions.getRandomMovementVector();
+      copy.infectionRate = Math.abs(HelperFunctions.generateInfectionRate() - copy.infectionRate);
       copy.myColor = this.generateNewColorWithinSameSpecter();
       copy.red = this.red;
       copy.blue = this.blue;
@@ -82,27 +82,31 @@ export class Square{
     let blue = this.blue;
 
     // if we're red we tweak our color within the red gradients
+    const randomInt = HelperFunctions.getRandomInt() % 50;
     if (red > 0 ) {
-      red = Constants.getRandomInt() % 50;
+      red = randomInt;
       red = red + 180;
+      return HelperFunctions.generateColorString(red, green, blue);
     }
     // and if we're green we tweak it within the green gradients
     if (green > 0 ) {
-      green = Constants.getRandomInt() % 50;
+      green = randomInt;
       green = green + 180;
+      return HelperFunctions.generateColorString(red, green, blue);
     }
     // same goes if we're blue...
     if (blue > 0 ) {
-      blue = Constants.getRandomInt() % 50;
+      blue = randomInt;
       blue = blue + 180;
+      return HelperFunctions.generateColorString(red, green, blue);
     }
-    return Constants.generateColorString(red, green, blue);
+    return HelperFunctions.generateColorString(red, green, blue);
   }
 
   getMyColorString(): string {
-    return Constants.generateColorString(this.red, this.green, this.blue);
+    return HelperFunctions.generateColorString(this.red, this.green, this.blue);
   }
   setMyColorString(): void {
-    this.myColor = Constants.generateColorString(this.red, this.green, this.blue);
+    this.myColor = HelperFunctions.generateColorString(this.red, this.green, this.blue);
   }
 }

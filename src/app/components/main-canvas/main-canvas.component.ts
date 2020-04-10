@@ -17,20 +17,22 @@ export class MainCanvasComponent implements OnInit {
   @Input()
   squaresCount: number;
 
+  public canvasWidthAndHeight: number = Constants.SCREEN_HEIGHT;
+
   squaresList: Square[] = [];
 
-  infectionRateRedVirus = 0;
-  infectionRateBlueVirus = 0;
-  infectionRateGreenVirus = 0;
+  infectionRateRedVirus = 40;
+  infectionRateBlueVirus = 50;
+  infectionRateGreenVirus = 20;
 
   private ctx: CanvasRenderingContext2D;
   private progressCtx: CanvasRenderingContext2D;
 
   constructor() {
 
-    const redSquare = new Square(HelperFunctions.getRandomInt(), HelperFunctions.getRandomInt());
-    const greenSquare = new Square(HelperFunctions.getRandomInt(), HelperFunctions.getRandomInt());
-    const blueSquare = new Square(HelperFunctions.getRandomInt(), HelperFunctions.getRandomInt());
+    const redSquare = new Square(HelperFunctions.getRandomInt(), HelperFunctions.getRandomInt(), this.infectionRateRedVirus);
+    const greenSquare = new Square(HelperFunctions.getRandomInt(), HelperFunctions.getRandomInt(), this.infectionRateGreenVirus);
+    const blueSquare = new Square(HelperFunctions.getRandomInt(), HelperFunctions.getRandomInt(), this.infectionRateBlueVirus);
 
     redSquare.red = 255;
     blueSquare.blue = 255;
@@ -63,20 +65,20 @@ export class MainCanvasComponent implements OnInit {
     return true;
   }
 
-  findNontakenSpot(): Square {
-    let x = HelperFunctions.getRandomInt();
-    let y = HelperFunctions.getRandomInt();
+  // findNontakenSpot(): Square {
+  //   let x = HelperFunctions.getRandomInt();
+  //   let y = HelperFunctions.getRandomInt();
 
-    let square = new Square(x, y);
+  //   let square = new Square(x, y);
 
-    while (!this.findMatch(square))
-    {
-      x = HelperFunctions.getRandomInt();
-      y = HelperFunctions.getRandomInt();
-      square = new Square(x, y);
-    }
-    return square;
-  }
+  //   while (!this.findMatch(square))
+  //   {
+  //     x = HelperFunctions.getRandomInt();
+  //     y = HelperFunctions.getRandomInt();
+  //     square = new Square(x, y);
+  //   }
+  //   return square;
+  // }
 
   drawInterval;
   moveInterval;
@@ -117,7 +119,7 @@ export class MainCanvasComponent implements OnInit {
   drawItems() {
     this.ctx = this.canvas.nativeElement.getContext('2d');
     const squaresLength = this.squaresList.length;
-    this.ctx.clearRect(0, 0, this.height, this.height);
+    this.ctx.clearRect(0, 0, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
     for (let i = 0; i < squaresLength; i++) {
       const square = this.squaresList[i];
       if (!square.isDead) {
@@ -132,6 +134,6 @@ export class MainCanvasComponent implements OnInit {
     }
   }
   onClick($event) {
-    console.log(this.canvas2);
+
   }
 }

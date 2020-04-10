@@ -32,12 +32,12 @@ export class HelperFunctions {
 
   // static function for generating a color-string from RGB values.
   public static generateColorString(red: number, green: number, blue: number): string {
-    return '#' + Constants.dec2hex(red) + Constants.dec2hex(green) + Constants.dec2hex(blue);
+    return '#' + HelperFunctions.dec2hex(red) + HelperFunctions.dec2hex(green) + HelperFunctions.dec2hex(blue);
   }
 
   // static function for generating a random infection rate.. all the way from 0 (constantly infecting) up to 170 which is basically never.
   public static generateInfectionRate(): number {
-    return (Constants.getRandomInt() % 170) + 10;
+    return (HelperFunctions.getRandomInt() % 170) + 10;
   }
 
 }

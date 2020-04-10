@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-md-12">
-        <canvas #canvas id="canvas" width="{{width}}" height="{{height}}" style="border:1px solid #000000;"></canvas>
+        <canvas #canvas id="canvas" width="{{canvasWidthAndHeight}}" height="{{canvasWidthAndHeight}}" style="border:1px solid #000000;"></canvas>
     </div>
 </div>
 <div class="row">
@@ -39,8 +39,5 @@
         Økningstempo
     </div>
 </div>
-
-<a [title]="squaresCount">argh</a>
-<app-argh></app-argh>
 
 <button (click)="onClick($event)">click me</button>
