@@ -28,6 +28,10 @@ export class MainCanvasComponent implements OnInit {
   private ctx: CanvasRenderingContext2D;
   private progressCtx: CanvasRenderingContext2D;
 
+  drawInterval;
+  moveInterval;
+  progressInterval;
+
   constructor() {
 
     const redSquare = new Square(HelperFunctions.getRandomInt(), HelperFunctions.getRandomInt(), this.infectionRateRedVirus);
@@ -79,10 +83,6 @@ export class MainCanvasComponent implements OnInit {
   //   }
   //   return square;
   // }
-
-  drawInterval;
-  moveInterval;
-  progressInterval;
 
   ngOnInit(): void {
     this.squaresCount = this.squaresList.length;
