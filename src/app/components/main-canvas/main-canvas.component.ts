@@ -21,9 +21,9 @@ export class MainCanvasComponent implements OnInit {
 
   squaresList: Square[] = [];
 
-  infectionRateRedVirus = 60;
-  infectionRateBlueVirus = 90;
-  infectionRateGreenVirus = 80;
+  infectionRateRedVirus = 90;
+  infectionRateBlueVirus = 130;
+  infectionRateGreenVirus = 180;
 
   private ctx: CanvasRenderingContext2D;
   private progressCtx: CanvasRenderingContext2D;
