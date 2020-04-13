@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, Input, ContentChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input, ContentChild, HostListener, AfterViewInit } from '@angular/core';
 import { Square } from 'src/app/models/Square';
 import { Constants } from '../../models/Constants';
 import { HelperFunctions } from 'src/app/models/HelperFunctions';
@@ -8,7 +8,7 @@ import { HelperFunctions } from 'src/app/models/HelperFunctions';
   templateUrl: './main-canvas.component.html',
   styleUrls: ['./main-canvas.component.scss']
 })
-export class MainCanvasComponent implements OnInit {
+export class MainCanvasComponent implements OnInit, AfterViewInit {
 
   @ViewChild('canvas', { static: true })
   canvas: ElementRef<HTMLCanvasElement>;
@@ -21,9 +21,9 @@ export class MainCanvasComponent implements OnInit {
 
   squaresList: Square[] = [];
 
-  infectionRateRedVirus = 90;
-  infectionRateBlueVirus = 130;
-  infectionRateGreenVirus = 180;
+  infectionRateRedVirus = 123;
+  infectionRateBlueVirus = 143;
+  infectionRateGreenVirus = 163;
 
   private ctx: CanvasRenderingContext2D;
   private progressCtx: CanvasRenderingContext2D;
@@ -31,6 +31,10 @@ export class MainCanvasComponent implements OnInit {
   drawInterval;
   moveInterval;
   progressInterval;
+  mywidth = 0;
+  redcount = 0;
+  greencount = 0;
+  bluecount = 0;
 
   constructor() {
 
@@ -69,21 +73,15 @@ export class MainCanvasComponent implements OnInit {
     return true;
   }
 
-  // findNontakenSpot(): Square {
-  //   let x = HelperFunctions.getRandomInt();
-  //   let y = HelperFunctions.getRandomInt();
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    console.log("resize");
+    console.log(this);
+    this.canvas.nativeElement.width = this.canvas.nativeElement.parentElement.clientWidth-35;
+    this.mywidth = this.canvas.nativeElement.width;
 
-  //   let square = new Square(x, y);
-
-  //   while (!this.findMatch(square))
-  //   {
-  //     x = HelperFunctions.getRandomInt();
-  //     y = HelperFunctions.getRandomInt();
-  //     square = new Square(x, y);
-  //   }
-  //   return square;
-  // }
-
+   }
+  
   ngOnInit(): void {
     this.squaresCount = this.squaresList.length;
 
@@ -96,20 +94,26 @@ export class MainCanvasComponent implements OnInit {
     this.progressInterval = setInterval(() => {
       this.drawProgressbar();
     });
+    console.log('oninit',this.canvas);
+    this.canvas.nativeElement.width = this.canvas.nativeElement.parentElement.clientWidth-35;
+  }
+
+  ngAfterViewInit() {
+    this.onResize(null);
   }
 
   drawProgressbar() {
     this.progressCtx = this.progressbar.nativeElement.getContext('2d');
-    this.progressCtx.clearRect(1, 0, Constants.SCREEN_HEIGHT, Constants.SCREEN_WIDTH);
+    this.progressCtx.clearRect(0, 0, Constants.SCREEN_HEIGHT, Constants.SCREEN_WIDTH);
     this.progressCtx.fillStyle = 'orange';
-    this.progressCtx.fillRect(1, 0, this.squaresCount / (Constants.MAX_VIRUS / Constants.SCREEN_HEIGHT) , 14);
+    this.progressCtx.fillRect(0, 0, this.squaresCount / (Constants.MAX_VIRUS / Constants.SCREEN_HEIGHT) , 14);
   }
 
 
   moveItems() {
     console.log('adjusting items');
     for (let i = 0; i < this.squaresCount; i++) {
-      const possibleNew = this.squaresList[i].adjustItem();
+      const possibleNew = this.squaresList[i].adjustItem(this.mywidth, Constants.SCREEN_HEIGHT);
       if (possibleNew != null) {
         this.squaresList.push(possibleNew);
         this.squaresCount++;
@@ -119,7 +123,7 @@ export class MainCanvasComponent implements OnInit {
   drawItems() {
     this.ctx = this.canvas.nativeElement.getContext('2d');
     const squaresLength = this.squaresList.length;
-    this.ctx.clearRect(0, 0, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
+    this.ctx.clearRect(0, 0, this.mywidth, Constants.SCREEN_HEIGHT);
     for (let i = 0; i < squaresLength; i++) {
       const square = this.squaresList[i];
       if (!square.isDead) {
@@ -127,6 +131,9 @@ export class MainCanvasComponent implements OnInit {
         this.ctx.fillRect(square.x, square.y, Constants.VIRUS_BOX_SIZE, Constants.VIRUS_BOX_SIZE);
         }
     }
+    this.redcount = this.squaresList.filter(p => p.red > 0).length
+    this.greencount  = this.squaresList.filter(p => p.green > 0).length
+    this.bluecount = this.squaresList.length - this.redcount - this.greencount;
 
     if (squaresLength > Constants.MAX_VIRUS) {
       clearInterval(this.drawInterval);

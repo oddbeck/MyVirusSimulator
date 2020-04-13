@@ -35,7 +35,7 @@ export class Square{
     }
   }
 
-  adjustItem() {
+  adjustItem(width: number, height: number) {
     if (this.isDead) {
       return;
     }
@@ -53,7 +53,7 @@ export class Square{
       this.x += 1;
       this.xAdjust *= -1;
     }
-    if (this.x >= Constants.SCREEN_WIDTH - Constants.VIRUS_BOX_SIZE ) {
+    if (this.x >= width - Constants.VIRUS_BOX_SIZE ) {
       this.x -= 1;
       this.xAdjust *= -1;
     }
