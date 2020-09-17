@@ -9,7 +9,8 @@ trigger:
 
 pool:
   name: OddArneLocal
-  vmImage: 'ubuntu-latest'
+  demands:
+    - npm
 
 steps:
 - script: npm install --save bootstrap
