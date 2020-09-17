@@ -6,7 +6,9 @@
 trigger:
 - master
 
+
 pool:
+  name: OddArneLocal
   vmImage: 'ubuntu-latest'
 
 steps:
